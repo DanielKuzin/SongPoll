@@ -32,6 +32,12 @@ export default class App extends Component {
     setTimeout(() => {
       this.setState({ isLoading: true });
       this.getData();
+      if (lyrics == "") {
+        this.getLyrics(
+          response.data.playingSongName,
+          response.data.playingSongArtist
+        );
+      }
       this.autoRefreshVotes();
     }, 5000);
   };
