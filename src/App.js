@@ -194,21 +194,20 @@ export default class App extends Component {
             />
           </div>
         </main>
-        {this.state.lyrics !== "" &&
-          this.state.lyrics !==
-            "No Lyrics Found"(
-              <div className="flex-grow-1 my-2" style={{ overflowY: "auto" }}>
-                <h3>Lyrics</h3>
-                <div
-                  className="text-center"
-                  style={{
-                    whiteSpace: "pre-wrap",
-                  }}
-                >
-                  {this.state.lyrics}
-                </div>
-              </div>
-            )}
+        {(this.state.lyrics !== "" ||
+          this.state.lyrics === "No Lyrics Found") && (
+          <div className="flex-grow-1 my-2" style={{ overflowY: "auto" }}>
+            <h3>Lyrics</h3>
+            <div
+              className="text-center"
+              style={{
+                whiteSpace: "pre-wrap",
+              }}
+            >
+              {this.state.lyrics}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
