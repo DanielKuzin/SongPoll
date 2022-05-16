@@ -110,9 +110,9 @@ export default class App extends Component {
     // Get votes
     axios.get("https://627b91cfb54fe6ee008a6235.mockapi.io/data/1").then(
       (response) => {
-        if (response.data.playingSongName != this.state.playingSong.name) {
+        if (response.data.playingSongName !== this.state.playingSong.name) {
           let oldSongName = this.state.playingSong.name;
-          if (oldSongName != "") window.location.reload(false);
+          if (oldSongName !== "") window.location.reload(false);
           this.getLyrics(
             response.data.playingSongName,
             response.data.playingSongArtist
@@ -188,7 +188,7 @@ export default class App extends Component {
             />
           </div>
         </main>
-        {this.state.lyrics != "" && (
+        {this.state.lyrics !== "" && (
           <div className="flex-grow-1 my-2" style={{ overflowY: "auto" }}>
             <h3>Lyrics</h3>
             <div
