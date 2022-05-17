@@ -119,21 +119,33 @@ export default class App extends Component {
   };
 
   handleVote = (voteAnswer) => {
-    //check if the user voted
-    axios
-      .get(serverUrl + "/voted", {
-        params: {
-          ipAddress: this.state.ipAddress,
-        },
-      })
-      .then(
-        (response) => {
-          if (response.data.voted) {
-            this.setState({
-              voted: true,
-            });
-            return;
-          } else {
+    if (this.state.ipAddress !== "") {
+      //check if the user voted
+      axios
+        .get(serverUrl + "/voted", {
+          params: {
+            ipAddress: this.state.ipAddress,
+          },
+        })
+        .then(
+          (response) => {
+            if (response.data.voted) {
+              this.setState({
+                voted: true,
+              });
+              return;
+            } else {
+              this.sendVote(voteAnswer);
+              // mark voted
+              axios.post(serverUrl + "/voted", {
+                params: {
+                  ipAddress: this.state.ipAddress,
+                },
+              });
+            }
+          },
+          (error) => {
+            console.log(error);
             this.sendVote(voteAnswer);
             // mark voted
             axios.post(serverUrl + "/voted", {
@@ -142,18 +154,11 @@ export default class App extends Component {
               },
             });
           }
-        },
-        (error) => {
-          console.log(error);
-          this.sendVote(voteAnswer);
-          // mark voted
-          axios.post(serverUrl + "/voted", {
-            params: {
-              ipAddress: this.state.ipAddress,
-            },
-          });
-        }
-      );
+        );
+    } else {
+      // ip address not found
+      this.sendVote(voteAnswer);
+    }
   };
 
   getLyrics = (trackName, trackArtist) => {
