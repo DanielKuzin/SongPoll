@@ -12,6 +12,8 @@ const pollStyles = {
   theme: "purple",
 };
 
+const serverUrl = "http://localhost:3001";
+
 export default class App extends Component {
   state = {
     isLoading: true,
@@ -21,9 +23,21 @@ export default class App extends Component {
       artist: "",
     },
     lyrics: "",
+    ipAddress: "",
+    voted: false,
   };
 
+  getIpAddress() {
+    axios.get("https://geolocation-db.com/json/").then((res) => {
+      console.log("ip: " + res.data.IPv4);
+      this.setState({
+        ipAddress: res.data.IPv4,
+      });
+    });
+  }
+
   componentDidMount() {
+    this.getIpAddress();
     this.getData();
     this.autoRefreshVotes();
   }
@@ -39,49 +53,61 @@ export default class App extends Component {
         );
       }
       this.autoRefreshVotes();
-    }, 5000);
+    }, 4000);
   };
 
-  handleVote = (voteAnswer) => {
+  sendVote = (voteAnswer) => {
     axios.get("https://627b91cfb54fe6ee008a6235.mockapi.io/data/1").then(
       (response) => {
         let pollAnswers = this.state.pollAnswers;
         switch (voteAnswer) {
           case response.data.song1Name + " - " + response.data.song1Artist:
-            axios.put("https://627b91cfb54fe6ee008a6235.mockapi.io/data/1", {
-              song1Votes: response.data.song1Votes + 1,
-            });
-            pollAnswers[0].votes = response.data.song1Votes + 1;
-            this.setState({
-              pollAnswers: pollAnswers,
-            });
+            axios
+              .put("https://627b91cfb54fe6ee008a6235.mockapi.io/data/1", {
+                song1Votes: response.data.song1Votes + 1,
+              })
+              .then(() => {
+                pollAnswers[0].votes = response.data.song1Votes + 1;
+                this.setState({
+                  pollAnswers: pollAnswers,
+                });
+              });
             break;
           case response.data.song2Name + " - " + response.data.song2Artist:
-            axios.put("https://627b91cfb54fe6ee008a6235.mockapi.io/data/1", {
-              song2Votes: response.data.song2Votes + 1,
-            });
-            pollAnswers[1].votes = response.data.song2Votes + 1;
-            this.setState({
-              pollAnswers: pollAnswers,
-            });
+            axios
+              .put("https://627b91cfb54fe6ee008a6235.mockapi.io/data/1", {
+                song2Votes: response.data.song2Votes + 1,
+              })
+              .then(() => {
+                pollAnswers[1].votes = response.data.song2Votes + 1;
+                this.setState({
+                  pollAnswers: pollAnswers,
+                });
+              });
             break;
           case response.data.song3Name + " - " + response.data.song3Artist:
-            axios.put("https://627b91cfb54fe6ee008a6235.mockapi.io/data/1", {
-              song3Votes: response.data.song3Votes + 1,
-            });
-            pollAnswers[2].votes = response.data.song3Votes + 1;
-            this.setState({
-              pollAnswers: pollAnswers,
-            });
+            axios
+              .put("https://627b91cfb54fe6ee008a6235.mockapi.io/data/1", {
+                song3Votes: response.data.song3Votes + 1,
+              })
+              .then(() => {
+                pollAnswers[2].votes = response.data.song3Votes + 1;
+                this.setState({
+                  pollAnswers: pollAnswers,
+                });
+              });
             break;
           case response.data.song4Name + " - " + response.data.song4Artist:
-            axios.put("https://627b91cfb54fe6ee008a6235.mockapi.io/data/1", {
-              song4Votes: response.data.song4Votes + 1,
-            });
-            pollAnswers[3].votes = response.data.song4Votes + 1;
-            this.setState({
-              pollAnswers: pollAnswers,
-            });
+            axios
+              .put("https://627b91cfb54fe6ee008a6235.mockapi.io/data/1", {
+                song4Votes: response.data.song4Votes + 1,
+              })
+              .then(() => {
+                pollAnswers[3].votes = response.data.song4Votes + 1;
+                this.setState({
+                  pollAnswers: pollAnswers,
+                });
+              });
             break;
           default:
         }
@@ -90,6 +116,34 @@ export default class App extends Component {
         console.log(error);
       }
     );
+  };
+
+  handleVote = (voteAnswer) => {
+    //check if the user voted
+    axios
+      .get(serverUrl + "/voted", {
+        params: {
+          ipAddress: this.state.ipAddress,
+        },
+      })
+      .then((response) => {
+        if (response.data.voted) {
+          console.log("voted");
+          this.setState({
+            voted: true,
+          });
+          return;
+        } else {
+          console.log("not voted");
+          this.sendVote(voteAnswer);
+          // mark voted
+          axios.post(serverUrl + "/voted", {
+            params: {
+              ipAddress: this.state.ipAddress,
+            },
+          });
+        }
+      });
   };
 
   getLyrics = (trackName, trackArtist) => {
@@ -173,14 +227,9 @@ export default class App extends Component {
         <h2>
           {this.state.playingSong.name + " - " + this.state.playingSong.artist}
         </h2>
-        {/* <img
-          style={{
-            resizeMode: "cover",
-            height: 100,
-            width: 100,
-          }}
-          src={this.state.playingSong.image}
-        ></img> */}
+        {this.state.voted && (
+          <h2 style={{ color: "red" }}>You already voted! can't vote twice</h2>
+        )}
         <main className="main">
           <div>
             <Poll
