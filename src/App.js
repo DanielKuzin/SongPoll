@@ -146,8 +146,12 @@ export default class App extends Component {
         (error) => {
           console.log(error);
           this.sendVote(voteAnswer);
-            // mark voted
-            axios.post(serverUrl + "/voted", {
+          // mark voted
+          axios.post(serverUrl + "/voted", {
+            params: {
+              ipAddress: this.state.ipAddress,
+            },
+          });
         }
       );
   };
