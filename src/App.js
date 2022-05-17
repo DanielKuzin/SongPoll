@@ -30,7 +30,6 @@ export default class App extends Component {
 
   getIpAddress() {
     axios.get("https://geolocation-db.com/json/").then((res) => {
-      console.log("ip: " + res.data.IPv4);
       this.setState({
         ipAddress: res.data.IPv4,
       });
@@ -127,24 +126,30 @@ export default class App extends Component {
           ipAddress: this.state.ipAddress,
         },
       })
-      .then((response) => {
-        if (response.data.voted) {
-          console.log("voted");
-          this.setState({
-            voted: true,
-          });
-          return;
-        } else {
-          console.log("not voted");
+      .then(
+        (response) => {
+          if (response.data.voted) {
+            this.setState({
+              voted: true,
+            });
+            return;
+          } else {
+            this.sendVote(voteAnswer);
+            // mark voted
+            axios.post(serverUrl + "/voted", {
+              params: {
+                ipAddress: this.state.ipAddress,
+              },
+            });
+          }
+        },
+        (error) => {
+          console.log(error);
           this.sendVote(voteAnswer);
-          // mark voted
-          axios.post(serverUrl + "/voted", {
-            params: {
-              ipAddress: this.state.ipAddress,
-            },
-          });
+            // mark voted
+            axios.post(serverUrl + "/voted", {
         }
-      });
+      );
   };
 
   getLyrics = (trackName, trackArtist) => {
