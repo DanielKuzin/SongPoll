@@ -12,7 +12,8 @@ const pollStyles = {
   theme: "purple",
 };
 
-const serverUrl = "http://localhost:3001";
+// const serverUrl = "http://localhost:3001";
+const serverUrl = "https://dans-player-server.lm.r.appspot.com";
 
 export default class App extends Component {
   state = {
