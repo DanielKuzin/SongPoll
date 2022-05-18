@@ -235,10 +235,10 @@ export default class App extends Component {
       <div
         className="app"
         style={{
-          backgroundImage: `url("https://images.pexels.com/photos/1939485/pexels-photo-1939485.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1")`,
+          backgroundImage: `url("https://i.pinimg.com/564x/13/62/25/1362258d5fa4a20660ab5ede0ce9c0ed.jpg")`,
         }}
       >
-        <h1 className="name">Now playing:</h1>
+        <h1>Now playing:</h1>
         <h2>
           {this.state.playingSong.name + " - " + this.state.playingSong.artist}
         </h2>

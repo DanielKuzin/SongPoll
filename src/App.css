@@ -1,4 +1,5 @@
 .app {
+  font-family: 'Macondo', cursive;
   display: flex;
   justify-content: center;
   flex-direction: column;
