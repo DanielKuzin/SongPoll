@@ -37,7 +37,7 @@ export default class App extends Component {
   }
 
   componentDidMount() {
-    this.getIpAddress();
+    // this.getIpAddress();
     this.getData();
     this.autoRefreshVotes();
   }
