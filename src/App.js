@@ -12,9 +12,6 @@ const pollStyles = {
   theme: "purple",
 };
 
-// const serverUrl = "http://localhost:3001";
-const serverUrl = "https://dans-player-server.lm.r.appspot.com";
-
 export default class App extends Component {
   state = {
     isLoading: true,
@@ -118,47 +115,31 @@ export default class App extends Component {
     );
   };
 
+  markUserVote(voteAnswer) {
+    localStorage.setItem("playingSongName", this.state.playingSong.name);
+    localStorage.setItem("voteAnswer", voteAnswer);
+  }
+
+  userVoted() {
+    let previousVote = localStorage.getItem("voteAnswer");
+    return (
+      localStorage.getItem("playingSongName") === this.state.playingSong.name &&
+      (previousVote === this.state.pollAnswers[0].option ||
+        previousVote === this.state.pollAnswers[1].option ||
+        previousVote === this.state.pollAnswers[2].option ||
+        previousVote === this.state.pollAnswers[3].option)
+    );
+  }
+
   handleVote = (voteAnswer) => {
-    if (this.state.ipAddress !== "") {
-      //check if the user voted
-      axios
-        .get(serverUrl + "/voted", {
-          params: {
-            ipAddress: this.state.ipAddress,
-          },
-        })
-        .then(
-          (response) => {
-            if (response.data.voted) {
-              this.setState({
-                voted: true,
-              });
-              return;
-            } else {
-              this.sendVote(voteAnswer);
-              // mark voted
-              axios.post(serverUrl + "/voted", {
-                params: {
-                  ipAddress: this.state.ipAddress,
-                },
-              });
-            }
-          },
-          (error) => {
-            console.log(error);
-            this.sendVote(voteAnswer);
-            // mark voted
-            axios.post(serverUrl + "/voted", {
-              params: {
-                ipAddress: this.state.ipAddress,
-              },
-            });
-          }
-        );
-    } else {
-      // ip address not found
-      this.sendVote(voteAnswer);
+    if (this.userVoted()) {
+      this.setState({
+        voted: true,
+      });
+      return;
     }
+    this.markUserVote(voteAnswer);
+    this.sendVote(voteAnswer);
   };
 
   getLyrics = (trackName, trackArtist) => {
