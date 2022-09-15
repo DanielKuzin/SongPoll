@@ -145,7 +145,7 @@ export default class App extends Component {
   getLyrics = (trackName, trackArtist) => {
     if (this.state.isLoading === true) return;
     axios
-      .get("https://dans-player-server.lm.r.appspot.com/lyrics", {
+      .get("https://dans-player-server2.lm.r.appspot.com/lyrics", {
         params: {
           track: trackName,
           artist: trackArtist,
